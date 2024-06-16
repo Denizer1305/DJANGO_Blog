@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link type="text/css" href="{{ url_for('adminPanel.static', filename='/css/style.css') }}" rel="stylesheet">
+     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    {% block title %}
+      {% if title %}
+        <title>{{title}}</title>
+      {% else %}
+        <title>Flask site</title>
+      {% endif %}
+    {% endblock %}
+</head>
+<body>
+<!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+    <div class="container">
+      <a class="navbar-brand" href="{{url_for('index')}}">News</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <ul class="navbar-nav">
+          {%for elem in menu%}
+          <li class="nav-item">
+              {% if elem.name == 'Добавить пост' %}
+                {% if not current_post %}
+                    <a class="btn btn-primary" href="{{url_for(elem.url)}}" data-bs-toggle="modal" id="link_add_post" data-bs-target="#AddPostModal">{{elem.name}}</a>
+                {% endif %}
+              {% else %}
+                <a class="nav-link" href="{{url_for(elem.url)}}">{{elem.name}}</a>
+              {% endif %}
+          </li>
+          {%endfor%}
+
+          <li class="nav-item">
+            <a class="nav-link" href="{{url_for('authorize.logout')}}">Выход</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+
+<!--Модальное окно Добавление поста-->
+  <div class="modal fade" id="AddPostModal" tabindex="-1" aria-labelledby="ModalLabelAddPost"
+    aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="ModalLabelAddPost">Добавить пост</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+        </div>
+        <div class="modal-body">
+            {% if l_form %}
+              {% for cat,msg in get_flashed_messages(True) %}
+              <div class="flash {{cat}}">{{msg}}</div>
+              {% endfor %}
+            {% endif%}
+                  <form action="{{url_for('adminPanel.add_post')}}" method="post" enctype="multipart/form-data">
+                      {{forms.post.add.hidden_tag()}}
+                            {% for field in forms.post.add if field.name not in ['submit', 'csrf_token']%}
+
+                           <p>{{field.label(class_="form-label")}}
+                            {%if field.errors%}
+                                {{field(class_="form-control")}}
+                                <ul class="invalid-feedback">
+                                    {% for e in field.errors%}
+                                    <li class="form-control invalid">
+                                        <p>{{e}}
+                                    </li>
+                                    {%endfor%}
+                                </ul>
+                            {% else%}
+                                {% if field.name == 'description'%}
+                                    {{field(class_="form-control", placeholder=field.description, rows=3)}}
+                                    <script>
+                                        document.querySelector('#description').innerHTML = '{{l_form.description}}'
+                                    </script>
+                                {% elif field.name == 'text'%}
+                                    {{field(class_="form-control", placeholder=field.description, rows=10)}}
+                                    <script>
+                                        document.querySelector('#text').innerHTML = '{{l_form.text}}'
+                                    </script>
+                                {% elif field.name == 'title' %}
+                                    {{field(class_="form-control", placeholder=field.description, value=l_form.title)}}
+                                {%else%}
+                                    {{field(class_="form-control", placeholder=field.description)}}
+                                {%endif%}
+                            {%endif%}
+                      {% endfor %}
+
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                      {{forms.post.add.submit(class_="btn btn-primary profile-button")}}
+                    </div>
+                  </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% block content %}
+{% endblock %}
+
+<!--Открываю модального окно если open_modal_add_post - True-->
+{% if l_form %}
+    <script>
+         document.addEventListener("DOMContentLoaded", () => {
+        document.querySelector('#link_add_post').click();})
+    </script>
+{% endif%}
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

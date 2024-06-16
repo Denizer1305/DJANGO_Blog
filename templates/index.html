@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+
+  <!-- Sidebar (Фильтр) -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-brand">Фильтр</div>
+    <form action="" method="post">
+            {{form.hidden_tag()}}
+
+              <div class="mb-3">
+                {{form.category(class_="form-select")}}
+              </div>
+
+                <div class="mb-3">
+                {{form.period(class_="form-select")}}
+              </div>
+
+            <div class="d-grid gap-2 mb-5">
+                {{form.submit(class_="btn btn-primary")}}
+                <button class="btn btn-secondary" type="button" onclick="location.href='{{url_for('.index')}}'">Сбросить</button>
+            </div>
+        </form>
+  </div>
+
+  <!-- News Container -->
+  <div class="news-container">
+      {% for cat,msg in get_flashed_messages(True) %}
+        <div class="flash {{cat}}">{{msg}}</div>
+    {% endfor %}
+    <!-- News Cards -->
+    <div class="row justify-content-center">
+      <div class="col-md-10">
+
+{% for post in posts %}
+          <a href="{{url_for('.show_post', alias=post.id)}}" style="text-decoration: none;color: #666;">
+        <div class="card news-card">
+          {% if post.filename%}
+            <img src="{{url_for('.send_file', filename=post.filename)}}" class="card-img-top" alt="...">
+          {% else %}
+            <img src="{{url_for('static', filename='/img/default_news.jpg')}}" class="card-img-top" alt="...">
+          {% endif %}
+          <div class="card-body">
+            <h5 class="card-title">{{post.title}}</h5>
+            <p class="card-text">{{post.desc}}</p>
+            <p class="card-text d-flex">
+                <small class="text-muted me-auto">Категория: {{post.name}}</small>
+                <small class="text-muted">Автор: {{post.username}}, {{post.date|formatdatetime('%d %B %Y, %H:%M')}}</small>
+
+            </p>
+          </div>
+        </div>
+              </a>
+        {% endfor %}
+
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Filter Button (Кнопка для показа фильтра на маленьких экранах) -->
+  <button class="btn btn-primary filter-btn" id="filterButton">Показать фильтр</button>
+
+<script src="{{ url_for('static', filename='js/myscript.js') }}"></script>
+
+{% endblock content %}

@@ -1,0 +1,96 @@
+{% extends 'adminpanel/base.html' %}
+
+{% block content %}
+
+<div class="news-container">
+    <div class="card m-auto">
+        <div class="card-body">
+            <h4 class="card-title  text-center">Редактирование поста</h4>
+            {% for cat,msg in get_flashed_messages(True) %}
+                <div class="flash {{cat}}">{{msg}}</div>
+            {% endfor %}
+            <form action="" method="post" enctype="multipart/form-data">
+                <div class="row mt-2">
+                    <div class="col-6">
+                        {{forms.post.edit.hidden_tag()}}
+                        {% for field in forms.post.edit if field.name not in ['submit', 'csrf_token', 'edit_text']%}
+                            <p>{{field.label(class_="form-label")}}
+                            {%if field.errors%}
+                                {{field(class_="form-control")}}
+                                <ul class="invalid-feedback">
+                                    {% for e in field.errors%}
+                                        <li class="form-control invalid">
+                                            <p>{{e}}
+                                        </li>
+                                    {%endfor%}
+                                </ul>
+                            {% else%}
+                                {% if field.name == 'edit_description'%}
+                                    {{field(class_="form-control", placeholder=field.description, rows=3)}}
+                                {% elif field.name == 'edit_title' %}
+                                    {{field(class_="form-control", placeholder=field.description, value=current_post.title)}}
+                                {% elif field.name == 'edit_category' %}
+                                    {{field(class_="form-control", placeholder=field.description)}}
+                                {%else%}
+                                    {% if current_post.filename%}
+                                        <img src="{{url_for('adminPanel.send_file', filename=current_post.filename)}}" class="card-img-top edit-img" onclick="edit_image.click()" alt="...">
+                                    {% else %}
+                                        <img src="{{url_for('static', filename='/img/default_news.jpg')}}" class="card-img-top edit-img" onclick="edit_image.click()" alt="...">
+                                    {% endif %}
+                                    {{field(class_="form-control", placeholder=field.description, onchange="previewFile()", style_="display:none")}}
+                                {%endif%}
+                            {%endif%}
+                        {% endfor %}
+                    </div>
+                    <div class="col-6">
+                        {% for field in forms.post.edit if field.name in ['edit_text']%}
+                           <p>{{field.label(class_="form-label")}}
+                            {%if field.errors%}
+                                {{field(class_="form-control")}}
+                                <ul class="invalid-feedback">
+                                    {% for e in field.errors%}
+                                    <li class="form-control invalid">
+                                        <p>{{e}}
+                                    </li>
+                                    {%endfor%}
+                                </ul>
+                            {% else%}
+                                {{field(class_="form-control", placeholder=field.description, rows=10)}}
+                            {%endif%}
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="modal-footer d-grid gap-2 d-md-flex justify-content-md-end">
+                    <a class="btn btn-secondary" href="{{url_for('adminPanel.posts')}}">Закрыть</a>
+                  {{forms.post.edit.submit(class_="btn btn-primary profile-button")}}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        document.querySelector('#edit_description').innerHTML = '{{current_post.desc}}';
+        document.querySelector('#edit_category').value = '{{current_post.category_id}}';
+        document.querySelector('#edit_text').innerHTML = `{{current_post.post}}`;
+    })
+
+    function previewFile() {
+        var preview = document.querySelector('.edit-img');
+        var file    = document.querySelector('#edit_image').files[0];
+        var reader  = new FileReader();
+
+        reader.onloadend = function () {
+        preview.src = reader.result;
+        }
+
+        if (file) {
+        reader.readAsDataURL(file);
+        } else {
+        preview.src = "";
+        }
+    }
+</script>
+
+{% endblock %}

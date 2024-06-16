@@ -1,0 +1,42 @@
+html{
+  height:100%;
+}
+body {
+  background: #a4bdb7 !important;
+  height:100%;
+}
+
+.card-login{
+    max-width:576px;
+    width:80%;
+    }
+.card-login .d-grid .gap-2 .d-md-flex .justify-content-md-end p{
+    padding-bottom: 0 !important;
+}
+
+.flash {
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+}
+
+.flash.success {
+    border: 1px solid #21DB56;
+    background: #AEFFC5;
+}
+
+.flash.error {
+    border: 1px solid #FF4343;
+    background: #FF9C9C;
+}
+
+.invalid-feedback{
+    display: block !important;
+
+}
+
+.invalid{
+    border: 1px solid #FF4343;
+    background: #FF9C9C !important;
+    color:white !important;
+}

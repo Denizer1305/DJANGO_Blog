@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="news-container">
+        {% for cat,msg in get_flashed_messages(True) %}
+            <div class="flash {{cat}}">{{msg}}</div>
+        {% endfor %}
+        <p>
+        <a href="{{url_for('authorize.login')}}">Авторизируетесь</a>
+         для доступа к закрытым страницам</p>
+    </div>
+{% endblock %}

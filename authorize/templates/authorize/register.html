@@ -1,0 +1,39 @@
+{% extends 'authorize/base.html' %}
+
+{%block content%}
+{{super()}}
+
+<div class="container mt-5">
+<div class="card card-login m-auto">
+    <div class="card-body">
+        <h5 class="card-title  text-center">Регистрация</h5>
+        <form action="" method="post" class="form-contact ">
+            {{form.hidden_tag()}}
+            {%for field in form if field.name not in ["csrf_token","submit"]%}
+            <p>{{field.label(class_="form-label")}}
+                {%if field.errors%}
+                    {{field(class_="form-control")}}
+                    <ul class="invalid-feedback">
+                        {% for e in field.errors%}
+                        <li class="form-control invalid">
+                            <p>{{e}}
+                        </li>
+                        {%endfor%}
+                    </ul>
+                {% else%}
+                    {{field(class_="form-control")}}
+                {%endif%}
+            {%endfor%}
+            {% for cat,msg in get_flashed_messages(True) %}
+                <div class="flash {{cat}}">{{msg}}</div>
+            {% endfor %}
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <button class="btn btn-secondary" type="button" onclick="location.href='{{url_for('.login')}}'">Авторизация</button>
+                {{form.submit(class_="btn btn-primary")}}
+            </div>
+        </form>
+    </div>
+ </div>
+</div>
+
+{%endblock%}

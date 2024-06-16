@@ -1,0 +1,170 @@
+{% extends 'adminpanel/base.html' %}
+
+{% block content %}
+
+<div class="news-container">
+        <div class="card m-auto">
+            <div class="card-body">
+                <h4 class="card-title  text-center">Категории</h4>
+                {%for category in categories%}
+                    <div class="row mt-2">
+                        <div class="col-1">
+                            <p>{{category.id}}.</p>
+                        </div>
+                        <div class="col-9">
+                            <p style="cursor: pointer;" onclick='link_edit_cat{{category.id}}.click()'>{{category.name}}</p>
+                        </div>
+                        <div class="col-2">
+                            <p  class="card-text d-flex">
+                                <a class="edit px-2 ms-auto" href="" data-bs-toggle="modal" id="link_edit_cat{{category.id}}" data-bs-target="#EditCatModal{{category.id}}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
+                                        <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
+                                    </svg>
+                                </a>
+                                <a class="edit px-2" href="" data-bs-toggle="modal" id="link_delete_cat{{category.id}}" data-bs-target="#DeleteCatModal{{category.id}}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                                        <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                                        <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                                    </svg>
+                                </a>
+                            </p>
+                        </div>
+                    </div>
+
+                <!--Модальное окно Редактирование категории-->
+                  <div class="modal fade" id="EditCatModal{{category.id}}" tabindex="-1" aria-labelledby="ModalLabelEdit{{category.id}}"
+                    aria-hidden="true">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="ModalLabelEdit{{category.id}}">Редактирование категории</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                        </div>
+                        <div class="modal-body">
+                          <form action="{{url_for('adminPanel.edit_category',alias=category.id)}}" method="post">
+                              {{forms.category.edit.hidden_tag()}}
+                              <p>
+                                {%if forms.category.edit.name.errors%}
+                                    {{forms.category.edit.name(class_="form-control")}}
+                                    <ul class="invalid-feedback">
+                                        {% for e in forms.category.edit.name.errors%}
+                                        <li class="form-control invalid">
+                                            <p>{{e}}
+                                        </li>
+                                        {%endfor%}
+                                    </ul>
+                                {% else%}
+                                    {{forms.category.edit.name(class_="form-control", value=category.name)}}
+                                {%endif%}
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                              {{forms.category.edit.submit(class_="btn btn-primary profile-button")}}
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+
+                <!--Модальное окно Удаление категории-->
+                  <div class="modal fade" id="DeleteCatModal{{category.id}}" tabindex="-1" aria-labelledby="ModalLabelDelete{{category.id}}"
+                    aria-hidden="true">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="ModalLabelDelete{{category.id}}">Удаление категории</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                        </div>
+                        <div class="modal-body">
+                          <form action="{{url_for('adminPanel.delete_category',alias=category.id)}}" method="post">
+                              {{forms.category.delete.hidden_tag()}}
+                              <p>{{forms.category.delete.name.label(class_="form-label")}}
+                                {%if forms.category.delete.name.errors%}
+                                    {{forms.category.delete.name(class_="form-control")}}
+                                    <ul class="invalid-feedback">
+                                        {% for d in forms.category.delete.name.errors%}
+                                        <li class="form-control invalid">
+                                            <p>{{e}}
+                                        </li>
+                                        {%endfor%}
+                                    </ul>
+                                {% else%}
+                                    {{forms.category.delete.name(class_="form-control", style="display:none", value="delete")}}
+                                {%endif%}
+
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                              {{forms.category.delete.submit(class_="btn btn-primary profile-button")}}
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                {%endfor%}
+                {% if not open_modal_add_cat %}
+                {% for cat,msg in get_flashed_messages(True) %}
+                    <div class="flash {{cat}}">{{msg}}</div>
+                {% endfor %}
+                {% endif %}
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <button type="button" class="btn btn-primary profile-button" data-bs-toggle="modal" data-bs-target="#AddModal" id="btn_add_cat">Добавить категорию</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!--Модальное окно Добавление категории-->
+  <div class="modal fade" id="AddModal" tabindex="-1" aria-labelledby="ModalLabelAdd"
+    aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="ModalLabelAdd">Добавить категории</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+        </div>
+        <div class="modal-body">
+
+            {% if open_modal_add_cat %}
+            {% for cat,msg in get_flashed_messages(True) %}
+              <div class="flash {{cat}}">{{msg}}</div>
+              {% endfor %}
+
+            {% endif%}
+          <form action="{{url_for('adminPanel.add_category')}}" method="post">
+              {{forms.category.add.hidden_tag()}}
+               <p>
+                {%if forms.category.add.name.errors%}
+                    {{forms.category.add.name(class_="form-control")}}
+                    <ul class="invalid-feedback">
+                        {% for e in forms.category.add.name.errors%}
+                        <li class="form-control invalid">
+                            <p>{{e}}
+                        </li>
+                        {%endfor%}
+                    </ul>
+                {% else%}
+                    {{forms.category.add.name(class_="form-control", placeholder=forms.category.add.name.description)}}
+                {%endif%}
+
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+              {{forms.category.add.submit(class_="btn btn-primary profile-button")}}
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+<!--Открываю модального окно если open_modal_add_cat - True-->
+{% if open_modal_add_cat %}
+    <script>
+         document.addEventListener("DOMContentLoaded", () => {
+        document.querySelector('#btn_add_cat').click();})
+    </script>
+{% endif%}
+
+{% endblock %}

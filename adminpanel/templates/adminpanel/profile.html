@@ -1,0 +1,199 @@
+{% extends 'adminpanel/base.html' %}
+
+{% block content %}
+
+    <div class="news-container">
+        <div class="card m-auto">
+            <div class="card-body">
+                <h4 class="card-title  text-center">Профиль пользователя</h4>
+                <div class="row mt-2">
+                    <div class="col-6">
+                        <p>Логин:</p>
+                    </div>
+                    <div class="col-5" style="cursor: pointer;" onclick='link_login.click()'>
+                        <p>{{current_user.username}}</p>
+                    </div>
+                    <div class="col-1">
+                        <a class="edit" href="" data-bs-toggle="modal" id="link_login" data-bs-target="#LoginModal">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
+                              <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-6">
+                        <p>Email:</p>
+                    </div>
+                    <div class="col-5" style="cursor: pointer;" onclick='link_email.click()'>
+                        <p>{{current_user.email}}</p>
+                    </div>
+                     <div class="col-1">
+                        <a class="edit" href="" data-bs-toggle="modal" id="link_email" data-bs-target="#EmailModal">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
+                              <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-md-6">
+                        <p>Дата регистрации:</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p>{{current_user.date}}</p>
+                    </div>
+                </div>
+                {% for cat,msg in get_flashed_messages(True) %}
+                    <div class="flash {{cat}}">{{msg}}</div>
+                {% endfor %}
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#DeleteModal">Удалить профиль</button>
+                <button type="button" class="btn btn-primary profile-button" data-bs-toggle="modal" data-bs-target="#PasswordModal">Изменить пароль</button>
+                </div>
+            </div>
+
+
+
+        </div>
+    </div>
+
+<!--Модальное окно Редактирование логина-->
+  <div class="modal fade" id="LoginModal" tabindex="-1" aria-labelledby="ModalLabelLogin"
+    aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="ModalLabelLogin">Редактировать</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+        </div>
+        <div class="modal-body">
+          <form action="{{url_for('adminPanel.edit_username')}}" method="post">
+              {{forms.post.edit.username.hidden_tag()}}
+              <p>{{forms.post.edit.username.name.label(class_="form-label")}}
+                {%if forms.post.edit.username.name.errors%}
+                    {{forms.post.edit.username.name(class_="form-control")}}
+                    <ul class="invalid-feedback">
+                        {% for e in forms.post.edit.username.name.errors%}
+                        <li class="form-control invalid">
+                            <p>{{e}}
+                        </li>
+                        {%endfor%}
+                    </ul>
+                {% else%}
+                    {{forms.post.edit.username.name(class_="form-control",value_=current_user.username)}}
+                {%endif%}
+
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+              {{forms.post.edit.username.submit(class_="btn btn-primary profile-button")}}
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!--Модальное окно Редактирование email-->
+  <div class="modal fade" id="EmailModal" tabindex="-1" aria-labelledby="ModalLabelEmail"
+    aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="ModalLabelEmail">Редактировать</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+        </div>
+        <div class="modal-body">
+          <form action="{{url_for('adminPanel.edit_email')}}" method="post">
+              {{forms.post.edit.email.hidden_tag()}}
+              <p>{{forms.post.edit.email.email.label(class_="form-label")}}
+                {%if forms.post.edit.email.email.errors%}
+                    {{forms.post.edit.email.email(class_="form-control")}}
+                    <ul class="invalid-feedback">
+                        {% for e in forms.post.edit.email.email.errors%}
+                        <li class="form-control invalid">
+                            <p>{{e}}
+                        </li>
+                        {%endfor%}
+                    </ul>
+                {% else%}
+                    {{forms.post.edit.email.email(class_="form-control",value_=current_user.email)}}
+                {%endif%}
+
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+              {{forms.post.edit.email.submit(class_="btn btn-primary profile-button")}}
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+<!--Модальное окно Изменение пароля-->
+  <div class="modal fade" id="PasswordModal" tabindex="-1" aria-labelledby="ModalLabelPassword"
+    aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="ModalLabelPassword">Изменение пароля</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+        </div>
+        <div class="modal-body">
+          <form action="{{url_for('adminPanel.edit_password')}}" method="post">
+              {{forms.post.edit.password.hidden_tag()}}
+              {%for field in forms.post.edit.password if field.name not in ["csrf_token","submit"]%}
+                  <p>{{field.label(class_="form-label")}}
+                    {%if field.errors%}
+                        {{field(class_="form-control")}}
+                        <ul class="invalid-feedback">
+                            {% for e in field.errors%}
+                            <li class="form-control invalid">
+                                <p>{{e}}
+                            </li>
+                            {%endfor%}
+                        </ul>
+                    {% else%}
+                        {{field(class_="form-control")}}
+                    {%endif%}
+              {%endfor%}
+
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+              {{forms.post.edit.password.submit(class_="btn btn-primary profile-button")}}
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+<!--Модальное окно Удаление профиля-->
+  <div class="modal fade" id="DeleteModal" tabindex="-1" aria-labelledby="ModalLabelDelete"
+    aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="ModalLabelDelete">Удаление профиля {{current_user.username}}</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+        </div>
+        <div class="modal-body">
+          <form action="{{url_for('adminPanel.delete_profile')}}" method="post">
+              {{ csrf_token }}
+                <div class="mb-3">
+                  <label for="RegisterPassword" class="form-label">Введите пароль</label>
+                  <input type="password" class="form-control" id="RegisterPassword" name="psw" required>
+                </div>
+
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+              <button type="submit" class="btn btn-primary">Удалить профиль</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
